@@ -12,9 +12,9 @@ function Ball(position, color){
 Ball.prototype.update = function(delta){
     this.position.addTo(this.velocity.multiply(delta));
 
-    this.velocity = this.velocity.multiply(0.98); // friction
+    this.velocity = this.velocity.multiply(0.981); // friction
 
-    if (this.velocity.length() < 5){
+    if (this.velocity.length() < 10){
         this.velocity = new Vector();
         this.isMoving = false;
     }

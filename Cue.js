@@ -1,5 +1,6 @@
 const CUE_ORIGINAL = new Vector(970, 11);
 const CUE_SHOT_ORIGINAL = new Vector(950, 11);
+const MAX_POWER = 8500;
 
 function Cue(position, onShoot){
     this.position = position;
@@ -34,7 +35,10 @@ Cue.prototype.updateRotation = function(){
 }
 
 Cue.prototype.increasePower = function(){
-    this.power += 100;
+    if (this.power > MAX_POWER){
+        return; // set a cap on max power
+    }
+    this.power += 120;
     this.origin.x += 5;
 }
 

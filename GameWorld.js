@@ -1,5 +1,5 @@
 // GAMEWORLD CONTAINS ALL OBJECTS OF THE GAME
-const DELTA = 1/100; // how much to update on each iteration
+const DELTA = 1/150; // how much to update on each iteration
 
 
 function GameWorld(){

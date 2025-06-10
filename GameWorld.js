@@ -28,9 +28,22 @@ function GameWorld(){
         this.whiteBall.shoot.bind(this.whiteBall));
 }
 
-// GameWorld Prototype has: update, draw, ballsMoving
+// GameWorld Prototype has: update, draw, ballsMoving, handleCollisions
+
+GameWorld.prototype.handleCollisions = function(){
+    for (let i = 0; i < this.balls.length; i++){
+        for(let j = i + 1; j < this.balls.length; j++){
+            const first = this.balls[i];
+            const second = this.balls[j];
+            first.collide(second);
+        }
+    }
+}
 
 GameWorld.prototype.update = function(){
+
+    this.handleCollisions();
+
     this.cue.update();
     
     for (let i = 0; i < this.balls.length; i++){

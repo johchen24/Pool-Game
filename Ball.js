@@ -1,5 +1,6 @@
 const BALL_ORIGINAL = new Vector(25, 25);
 const BALL_DIAMETER = 38;
+const BALL_RADIUS = BALL_DIAMETER/2;
 
 function Ball(position, color){
     this.position = position;
@@ -29,8 +30,7 @@ Ball.prototype.shoot = function(power, rotation){
     this.isMoving = true;
 }
 
-// elastic collision with physics knowledge
-Ball.prototype.collide = function(ball){
+Ball.prototype.collideWithBall = function(ball){
     // Step 1: find a normal vector
     const n = this.position.subtract(ball.position);
 
@@ -74,6 +74,47 @@ Ball.prototype.collide = function(ball){
     this.velocity = v1nPrime.add(v1tPrime);
     ball.velocity = v2nPrime.add(v2tPrime);
 
-    this.moving = true;
-    ball.moving = true;
+    this.isMoving = true;
+    ball.isMoving = true;
+}
+
+Ball.prototype.collideWithTable = function(table){
+    if(!this.isMoving){
+        return;
+    }
+
+    let collided = false;
+    if(this.position.y <= table.TopY + BALL_RADIUS){
+        this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+        collided = true;
+    }
+
+    if(this.position.x >= table.RightX - BALL_RADIUS){
+        this.velocity = new Vector(-this.velocity.x, this.velocity.y);
+        collided = true;
+    }
+
+    if(this.position.y >= table.BottomY - BALL_RADIUS){
+        this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+        collided = true;
+    }
+
+    if(this.position.x <= table.LeftX + BALL_RADIUS){
+        this.velocity = new Vector(-this.velocity.x, this.velocity.y);
+        collided = true;
+    }
+
+    if(collided){
+        this.velocity = this.velocity.multiply(0.99);
+    }
+    
+}
+
+// elastic collision with physics knowledge
+Ball.prototype.collide = function(object){
+    if(object instanceof Ball){
+        this.collideWithBall(object);
+    } else {
+        this.collideWithTable(object);
+    }
 }

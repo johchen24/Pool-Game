@@ -26,12 +26,20 @@ function GameWorld(){
     this.cue = new Cue(
         new Vector(413, 413),
         this.whiteBall.shoot.bind(this.whiteBall));
+
+    this.table = { // table border
+        TopY: 57,
+        RightX: 1443,
+        BottomY: 768,
+        LeftX: 57
+    }
 }
 
 // GameWorld Prototype has: update, draw, ballsMoving, handleCollisions
 
 GameWorld.prototype.handleCollisions = function(){
     for (let i = 0; i < this.balls.length; i++){
+        this.balls[i].collide(this.table);
         for(let j = i + 1; j < this.balls.length; j++){
             const first = this.balls[i];
             const second = this.balls[j];

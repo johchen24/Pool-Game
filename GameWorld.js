@@ -1,28 +1,9 @@
 // GAMEWORLD CONTAINS ALL OBJECTS OF THE GAME
-const DELTA = 1/150; // how much to update on each iteration
-
 
 function GameWorld(){
-    this.balls = [ // non-white balls
-        [new Vector(1022, 413), COLOR.YELLOW],
-        [new Vector(1056, 393), COLOR.YELLOW],
-        [new Vector(1056, 433), COLOR.RED],
-        [new Vector(1090, 374), COLOR.RED],
-        [new Vector(1090, 413), COLOR.BLACK],
-        [new Vector(1090, 452), COLOR.YELLOW],
-        [new Vector(1126, 354), COLOR.YELLOW],
-        [new Vector(1126, 393), COLOR.RED],
-        [new Vector(1126, 433), COLOR.YELLOW],
-        [new Vector(1126, 472), COLOR.RED],
-        [new Vector(1162, 335), COLOR.RED],
-        [new Vector(1162, 374), COLOR.RED],
-        [new Vector(1162, 413), COLOR.YELLOW],
-        [new Vector(1162, 452), COLOR.RED],
-        [new Vector(1162, 491), COLOR.YELLOW],
-        [new Vector(413,413), COLOR.WHITE],
-    ].map(b => new Ball(b[0], b[1]));
+    this.balls = CONSTANTS.ballsParams.map(b => new Ball(...b));
 
-    this.whiteBall = this.balls[this.balls.length - 1];
+    this.whiteBall = this.balls.find(b => b.color === COLOR.WHITE);
     this.cue = new Cue(
         new Vector(413, 413),
         this.whiteBall.shoot.bind(this.whiteBall));
@@ -39,11 +20,12 @@ function GameWorld(){
 
 GameWorld.prototype.handleCollisions = function(){
     for (let i = 0; i < this.balls.length; i++){
-        this.balls[i].collide(this.table);
+        this.balls[i].collideWithTable(this.table);
+
         for(let j = i + 1; j < this.balls.length; j++){
             const first = this.balls[i];
             const second = this.balls[j];
-            first.collide(second);
+            first.collideWithBall(second);
         }
     }
 }
@@ -55,7 +37,7 @@ GameWorld.prototype.update = function(){
     this.cue.update();
     
     for (let i = 0; i < this.balls.length; i++){
-        this.balls[i].update(DELTA);
+        this.balls[i].update(CONSTANTS.delta);
     }
 
     if (!this.ballsMoving() && this.cue.didShot){

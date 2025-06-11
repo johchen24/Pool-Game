@@ -1,28 +1,25 @@
-const BALL_ORIGINAL = new Vector(25, 25);
-const BALL_DIAMETER = 38;
-const BALL_RADIUS = BALL_DIAMETER/2;
-
 function Ball(position, color){
     this.position = position;
     this.velocity = new Vector();
     this.isMoving = false;
     this.sprite = getBallByColor(color);
+    this.color = color;
 }
 
 // Ball Prototype has update, draw, shoot, collide
 Ball.prototype.update = function(delta){
     this.position.addTo(this.velocity.multiply(delta));
 
-    this.velocity = this.velocity.multiply(0.981); // friction
+    this.velocity = this.velocity.multiply(1 - CONSTANTS.frictionEnergyLoss); // friction
 
-    if (this.velocity.length() < 10){
+    if (this.velocity.length() < CONSTANTS.minVelocityLength){
         this.velocity = new Vector();
         this.isMoving = false;
     }
 }
 
 Ball.prototype.draw = function(){
-    canvas.drawImage(this.sprite, this.position, BALL_ORIGINAL)
+    canvas.drawImage(this.sprite, this.position, CONSTANTS.ballOrigin)
 }
 
 Ball.prototype.shoot = function(power, rotation){
@@ -30,6 +27,7 @@ Ball.prototype.shoot = function(power, rotation){
     this.isMoving = true;
 }
 
+// Elastic collision with physics
 Ball.prototype.collideWithBall = function(ball){
     // Step 1: find a normal vector
     const n = this.position.subtract(ball.position);
@@ -37,12 +35,12 @@ Ball.prototype.collideWithBall = function(ball){
     // Step 2: find distance
     const dist = n.length();
 
-    if (dist > BALL_DIAMETER){
+    if (dist > CONSTANTS.ballDiameter){
         return; // no collision
     }
 
     // Find minimum translation distance
-    const minTransDist = n.multiply((BALL_DIAMETER - dist) / dist);
+    const minTransDist = n.multiply((CONSTANTS.ballDiameter - dist) / dist);
 
     // Push-pull balls apart
     this.position = this.position.add(minTransDist.multiply(1/2));
@@ -84,37 +82,32 @@ Ball.prototype.collideWithTable = function(table){
     }
 
     let collided = false;
-    if(this.position.y <= table.TopY + BALL_RADIUS){
+    if(this.position.y <= table.TopY + CONSTANTS.ballRadius){
+        this.position.y = table.TopY + CONSTANTS.ballRadius;
         this.velocity = new Vector(this.velocity.x, -this.velocity.y);
         collided = true;
     }
 
-    if(this.position.x >= table.RightX - BALL_RADIUS){
+    if(this.position.x >= table.RightX - CONSTANTS.ballRadius){
+        this.position.x = table.RightX - CONSTANTS.ballRadius
         this.velocity = new Vector(-this.velocity.x, this.velocity.y);
         collided = true;
     }
 
-    if(this.position.y >= table.BottomY - BALL_RADIUS){
+    if(this.position.y >= table.BottomY - CONSTANTS.ballRadius){
+        this.position.y = table.BottomY - CONSTANTS.ballRadius
         this.velocity = new Vector(this.velocity.x, -this.velocity.y);
         collided = true;
     }
 
-    if(this.position.x <= table.LeftX + BALL_RADIUS){
+    if(this.position.x <= table.LeftX + CONSTANTS.ballRadius){
+        this.position.x = table.LeftX + CONSTANTS.ballRadius
         this.velocity = new Vector(-this.velocity.x, this.velocity.y);
         collided = true;
     }
 
     if(collided){
-        this.velocity = this.velocity.multiply(0.99);
+        this.velocity = this.velocity.multiply(1- CONSTANTS.collisionEnergyLoss);
     }
     
-}
-
-// elastic collision with physics knowledge
-Ball.prototype.collide = function(object){
-    if(object instanceof Ball){
-        this.collideWithBall(object);
-    } else {
-        this.collideWithTable(object);
-    }
 }

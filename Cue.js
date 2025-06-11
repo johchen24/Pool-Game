@@ -1,11 +1,7 @@
-const CUE_ORIGINAL = new Vector(970, 11);
-const CUE_SHOT_ORIGINAL = new Vector(950, 11);
-const MAX_POWER = 8500;
-
 function Cue(position, onShoot){
     this.position = position;
     this.rotation = 0;
-    this.origin = CUE_ORIGINAL.copy();
+    this.origin = CONSTANTS.cueOrigin.copy();
     this.power = 0; // how hard to hit
     this.onShoot = onShoot; // this is a function
     this.didShot = false;
@@ -14,6 +10,10 @@ function Cue(position, onShoot){
 // Cue Prototype has: update, draw, updateRotation, increasePower, shoot, positionAgain
 
 Cue.prototype.update = function(){
+
+    if(this.didShot){
+        return; // prevent shooting again before ball stops
+    }
 
     if(Mouse.left.down){
         this.increasePower();
@@ -35,22 +35,22 @@ Cue.prototype.updateRotation = function(){
 }
 
 Cue.prototype.increasePower = function(){
-    if (this.power > MAX_POWER){
+    if (this.power > CONSTANTS.maxPower){
         return; // set a cap on max power
     }
-    this.power += 120;
-    this.origin.x += 5;
+    this.power += CONSTANTS.powerIncrease;
+    this.origin.x += CONSTANTS.originXIncrease;
 }
 
 Cue.prototype.shoot = function(){
     this.onShoot(this.power, this.rotation);
     this.power = 0;
-    this.origin = CUE_SHOT_ORIGINAL.copy();
+    this.origin = CONSTANTS.cueShotOrigin.copy();
     this.didShot = true;
 }
 
 Cue.prototype.positionAgain = function(position){
     this.position = position.copy();
-    this.origin = CUE_ORIGINAL.copy();
+    this.origin = CONSTANTS.cueOrigin.copy();
     this.didShot = false;
 }

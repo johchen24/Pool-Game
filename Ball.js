@@ -4,10 +4,16 @@ function Ball(position, color){
     this.isMoving = false;
     this.sprite = getBallByColor(color);
     this.color = color;
+    this.visible = true;
 }
 
-// Ball Prototype has update, draw, shoot, collide
+// Ball Prototype has update, draw, shoot, collide, handleBallInPocket
 Ball.prototype.update = function(delta){
+
+    if(!this.visible){
+        return;
+    }
+
     this.position.addTo(this.velocity.multiply(delta));
 
     this.velocity = this.velocity.multiply(1 - CONSTANTS.frictionEnergyLoss); // friction
@@ -19,6 +25,9 @@ Ball.prototype.update = function(delta){
 }
 
 Ball.prototype.draw = function(){
+    if(!this.visible){
+        return;
+    }
     canvas.drawImage(this.sprite, this.position, CONSTANTS.ballOrigin)
 }
 
@@ -29,6 +38,10 @@ Ball.prototype.shoot = function(power, rotation){
 
 // Elastic collision with physics
 Ball.prototype.collideWithBall = function(ball){
+    if (!this.visible || !ball.visible){
+        return; // ball not in game anymore
+    }
+
     // Step 1: find a normal vector
     const n = this.position.subtract(ball.position);
 
@@ -77,7 +90,7 @@ Ball.prototype.collideWithBall = function(ball){
 }
 
 Ball.prototype.collideWithTable = function(table){
-    if(!this.isMoving){
+    if(!this.isMoving || !this.visible){
         return;
     }
 
@@ -110,4 +123,19 @@ Ball.prototype.collideWithTable = function(table){
         this.velocity = this.velocity.multiply(1- CONSTANTS.collisionEnergyLoss);
     }
     
+}
+
+Ball.prototype.handleBallInPocket = function(){
+
+    if (!this.visible){
+        return;
+    }
+    let inPocket = CONSTANTS.pockets.some(p => {return this.position.distFrom(p) < CONSTANTS.pocketRadius});
+
+    if (!inPocket){
+        return;
+    }
+
+    this.visible = false;
+    this.isMoving = false;
 }

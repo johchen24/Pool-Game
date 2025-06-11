@@ -20,6 +20,7 @@ function GameWorld(){
 
 GameWorld.prototype.handleCollisions = function(){
     for (let i = 0; i < this.balls.length; i++){
+        this.balls[i].handleBallInPocket();
         this.balls[i].collideWithTable(this.table);
 
         for(let j = i + 1; j < this.balls.length; j++){
@@ -32,8 +33,8 @@ GameWorld.prototype.handleCollisions = function(){
 
 GameWorld.prototype.update = function(){
 
+    
     this.handleCollisions();
-
     this.cue.update();
     
     for (let i = 0; i < this.balls.length; i++){

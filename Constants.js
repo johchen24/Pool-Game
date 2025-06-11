@@ -33,5 +33,16 @@ const CONSTANTS = {
     powerIncrease: 120,
     originXIncrease: 5,
     collisionEnergyLoss: 0.01,
-    frictionEnergyLoss: 0.019
+    frictionEnergyLoss: 0.019,
+
+    // for table
+    pocketRadius: 46,
+    pockets: [
+        new Vector(750, 32),
+        new Vector(750, 794),
+        new Vector(62, 62),
+        new Vector(1435, 62),
+        new Vector(62, 762),
+        new Vector(1435, 762)
+    ]
 }

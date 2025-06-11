@@ -5,7 +5,7 @@ function Vector(x = 0,y = 0){
     this.y = y;
 }
 
-// Vector Prototype has: copy, addTo, multiply, length
+// Vector Prototype has: copy, addTo, multiply, length, distFrom
 // Also for collision: add, subtract, dot
 
 Vector.prototype.copy = function(){
@@ -37,3 +37,6 @@ Vector.prototype.dot = function(vector){
     return this.x * vector.x + this.y * vector.y;
 }
 
+Vector.prototype.distFrom = function(vector){
+    return this.subtract(vector).length();
+}

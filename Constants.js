@@ -24,7 +24,9 @@ const CONSTANTS = {
     ballDiameter: 38,
     ballRadius: 19,
     minVelocityLength: 10,
-
+    
+    // White ball respotting position
+    whiteBallRespotPosition: new Vector(413, 413),
 
     // for cue
     cueOrigin: new Vector(970, 11),

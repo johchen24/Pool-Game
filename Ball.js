@@ -128,14 +128,23 @@ Ball.prototype.collideWithTable = function(table){
 Ball.prototype.handleBallInPocket = function(){
 
     if (!this.visible){
-        return;
+        return false; // Ball already potted, no change
     }
     let inPocket = CONSTANTS.pockets.some(p => {return this.position.distFrom(p) < CONSTANTS.pocketRadius});
 
     if (!inPocket){
-        return;
+        return false; // Ball not in pocket
     }
 
     this.visible = false;
     this.isMoving = false;
+    return true; // Ball was just potted
+}
+
+// Respot the ball at given position (used for white ball respotting)
+Ball.prototype.respot = function(position){
+    this.position = position.copy();
+    this.velocity = new Vector(); // Reset velocity
+    this.visible = true; // Make ball visible again
+    this.isMoving = false; // Ball is stationary when respotted
 }

@@ -19,8 +19,27 @@ function GameWorld(){
 // GameWorld Prototype has: update, draw, ballsMoving, handleCollisions
 
 GameWorld.prototype.handleCollisions = function(){
+    // Check for pocket collisions first and handle white ball respotting
+    let whiteBallPotted = false;
+    
     for (let i = 0; i < this.balls.length; i++){
-        this.balls[i].handleBallInPocket();
+        const wasPotted = this.balls[i].handleBallInPocket();
+        
+        // Check if white ball was potted
+        if (wasPotted && this.balls[i].color === COLOR.WHITE) {
+            whiteBallPotted = true;
+        }
+    }
+    
+    // Respot white ball if it was potted
+    if (whiteBallPotted) {
+        this.whiteBall.respot(CONSTANTS.whiteBallRespotPosition);
+        // Reposition cue to new white ball position
+        this.cue.positionAgain(this.whiteBall.position);
+    }
+    
+    // Handle table and ball collisions
+    for (let i = 0; i < this.balls.length; i++){
         this.balls[i].collideWithTable(this.table);
 
         for(let j = i + 1; j < this.balls.length; j++){
